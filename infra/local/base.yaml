@@ -1,0 +1,49 @@
+networks:
+  boost:
+    driver: bridge
+
+volumes:
+  crdb-data:
+  pg-data:
+  redis-data:
+
+services:
+  pg:
+    container_name: postgres
+    image: postgres:17.4
+    environment:
+      - POSTGRES_DB=boost
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGDATA=/data/postgres
+    volumes:
+      - pg-data:/data/postgres
+    ports:
+      - "15432:5432"
+    networks:
+      - boost
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    container_name: redis
+    image: redis:7.4.2-alpine
+    environment:
+      - REDIS_PASSWORD=redis
+    volumes:
+      - redis-data:/data/redis
+    ports:
+      - "16379:6379"
+    networks:
+      - boost
+    command: ["redis-server"]
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5

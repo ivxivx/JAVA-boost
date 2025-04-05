@@ -1,0 +1,21 @@
+
+[jdbc]
+demo = """
+  jdbcUrl=jdbc:postgresql://127.0.0.1:15432/boost
+  username=postgres
+  password=postgres
+  poolName=demo-db-pool
+  # platform=postgresql
+  # dataSourceClassName=com.zaxxer.hikari.HikariDataSource
+  driverClassName=org.postgresql.Driver
+  maximumPoolSize=15
+  validationTimeout=30000
+  connectionTestQuery=SELECT 1
+  connectionTimeout=60000
+  minimumIdle=1
+"""
+
+[redis]
+demo = """
+  servers=localhost:16379
+"""

@@ -1,0 +1,224 @@
+{
+	"info": {
+		"_postman_id": "cb8aa082-449c-48cc-8455-57e3360fc33f",
+		"name": "boost-demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24763693"
+	},
+	"item": [
+		{
+			"name": "api-create-order",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const req = JSON.parse(pm.request.body.raw);",
+							"const res = pm.response.json();",
+							"",
+							"console.log(req.externalId, res);",
+							"",
+							"pm.collectionVariables.set(\"demo_order_id\", res.data[0].order_id);",
+							"pm.collectionVariables.set(\"demo_order_external_id\", req.external_id);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"namespace\": \"demo\",\n    \"external_id\": \"{{$randomUUID}}\",\n    \"amount\" : \"123\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{boost_url_base}}/demo/orders",
+					"host": [
+						"{{boost_url_base}}"
+					],
+					"path": [
+						"demo",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sql-get-order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const orderId = pm.collectionVariables.get(\"demo_order_id\");",
+							"const externalId = pm.collectionVariables.get(\"demo_order_external_id\");",
+							"",
+							"pm.test(\"completed\", function () {",
+							"    res = pm.response.json();",
+							"",
+							"    pm.expect(res.data[0].id).to.eql(orderId);",
+							"    pm.expect(res.data[0].external_id).to.eql(externalId);",
+							"    pm.expect(res.data[0].status).to.eql(\"completed\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"namespace\": \"demo\",\n    \"sql\" : \"SELECT * FROM orders WHERE external_id = '{{demo_order_external_id}}'\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{boost_url_base}}/jdbc/single/read",
+					"host": [
+						"{{boost_url_base}}"
+					],
+					"path": [
+						"jdbc",
+						"single",
+						"read"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "redis-opsForValue-get",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"namespace\": \"demo\",\n    \"key\": \"order:{{demo_order_id}}\",\n    \"hashKey\": \"{{demo_order_id}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{boost_url_base}}/string-redis/opsForHash/get",
+					"host": [
+						"{{boost_url_base}}"
+					],
+					"path": [
+						"string-redis",
+						"opsForHash",
+						"get"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "os-grep-file",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const orderId = pm.collectionVariables.get(\"demo_order_id\");",
+							"const externalId = pm.collectionVariables.get(\"demo_order_external_id\");",
+							"",
+							"pm.test(\"found\", function () {",
+							"    res = pm.response.json();",
+							"",
+							"    pm.expect(res.data.length).to.eql(1);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"command\": \"grep \\\"order completed: {{demo_order_external_id}}\\\" {{os_user_home}}/boost-demo.log\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{boost_url_base}}/os/file/grep",
+					"host": [
+						"{{boost_url_base}}"
+					],
+					"path": [
+						"os",
+						"file",
+						"grep"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "demo_order_id",
+			"value": ""
+		},
+		{
+			"key": "demo_order_external_id",
+			"value": ""
+		}
+	]
+}
