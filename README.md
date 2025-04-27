@@ -6,6 +6,7 @@ graph LR
    Boost --> Database
    Boost --> FS(File System)
    Boost --> Redis
+   Boost --> TP(Temporal Workflow)
    Boost --> ...
 ```
 
@@ -23,6 +24,7 @@ Boost currently supports accessing the following resources:
 - Database (via JDBC)
 - Local file system
 - Redis
+- [Temporal Workflow](https://temporal.io/)
 
 The database supports both read and write operations. This is particularly useful for automating tests, as it allows you to update database records when needed. For example, you might need to update a customer's KYC status during testing, making database write functionality very convenient.
 
