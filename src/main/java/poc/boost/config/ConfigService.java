@@ -11,8 +11,6 @@ import javax.annotation.PostConstruct;
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -23,6 +21,8 @@ import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 import poc.boost.app.BoostRuntimeException;
 import poc.boost.database.JdbcConfig;
 import poc.boost.redis.RedisConfig;
+import poc.boost.temporalio.TemporalClient;
+import poc.boost.temporalio.TemporalConfig;
 
 @Service
 @Slf4j
@@ -59,6 +59,12 @@ public class ConfigService {
             val stringRedisTemplate = RedisConfig.createConfig(properties);
 
             config.setStringRedisTemplate(stringRedisTemplate);
+        });
+
+        init(configMap, configFile.getTemporalio().entrySet(), (config, properties) -> {
+            val temporalClient = TemporalConfig.createConfig(properties);
+
+            config.setTemporalClient(temporalClient);
         });
     }
 
@@ -98,5 +104,9 @@ public class ConfigService {
 
     public StringRedisTemplate getStringRedisTemplate() {
         return configs.get().getStringRedisTemplate();
+    }
+
+    public TemporalClient getTemporalClient() {
+        return configs.get().getTemporalClient();
     }
 }

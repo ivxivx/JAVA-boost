@@ -9,5 +9,6 @@ public enum ControllerType {
     OS,
     SSH,
     Redis,
+    TemporalIO,
     ;
 }

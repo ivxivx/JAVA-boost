@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import poc.boost.temporalio.TemporalClient;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,4 +18,5 @@ public class Config {
     
     private JdbcTemplate jdbcTemplate;
     private StringRedisTemplate stringRedisTemplate;
+    private TemporalClient temporalClient;
 }

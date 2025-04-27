@@ -10,4 +10,6 @@ public class ConfigFile {
     private Map<Namespace, Property> jdbc;
 
     private Map<Namespace, Property> redis;
+
+    private Map<Namespace, Property> temporalio;
 }

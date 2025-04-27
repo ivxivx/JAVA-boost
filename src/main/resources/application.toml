@@ -19,3 +19,7 @@ demo = """
 demo = """
   servers=localhost:16379
 """
+[temporalio]
+local_default = """
+  namespace=default
+"""
